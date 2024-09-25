@@ -27,7 +27,12 @@ public class JSONTranslationExample {
                     .getClassLoader()
                     .getResource("sample.json")
                     .toURI()));
-            this.jsonArray = new JSONArray(jsonString);
+            try {
+                this.jsonArray = new JSONArray(jsonString);
+            }
+            catch (JSONException ex) {
+                throw new RuntimeException(ex);
+            }
         }
         catch (IOException | URISyntaxException ex) {
             throw new RuntimeException(ex);
@@ -37,11 +42,17 @@ public class JSONTranslationExample {
     /**
      * Returns the Spanish translation of Canada.
      * @return the Spanish translation of Canada
+     * @throws RuntimeException if Canada is not found, or if Canada doesn't contain a Spanish translation.
      */
     public String getCanadaCountryNameSpanishTranslation() {
-        final int canadaIndex = 30;
-        JSONObject canada = jsonArray.getJSONObject(canadaIndex);
-        return canada.getString("es");
+        try {
+            // Not a magic number anymore
+            JSONObject canada = jsonArray.getJSONObject(JSONTranslationExample.CANADA_INDEX);
+            return canada.getString("es");
+        }
+        catch (JSONException ex) {
+            throw new RuntimeException(ex);
+        }
     }
 
     /**
@@ -49,7 +60,7 @@ public class JSONTranslationExample {
      * @param countryCode the country, as its three-letter code.
      * @param languageCode the language to translate to, as its two-letter code.
      * @return the translation of country to the given language or "Country not found" if there is no translation.
-     * @throws RuntimeException if JSON is invalid.
+     * @throws RuntimeException if any JSON cannot be found.
      */
     public String getCountryNameTranslation(String countryCode, String languageCode) {
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -59,7 +70,7 @@ public class JSONTranslationExample {
                     return obj.getString(languageCode);
                 }
             }
-            catch (IOException | JSONException ex) {
+            catch (JSONException ex) {
                 throw new RuntimeException(ex);
             }
         }
