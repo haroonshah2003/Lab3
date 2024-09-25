@@ -1,5 +1,7 @@
 package org.translation;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -43,9 +45,9 @@ public class Main {
             if (quit.equals(country)) {
                 break;
             }
-            // TODO Task: Once you switch promptForCountry so that it returns the country
-            //            name rather than the 3-letter country code, you will need to
-            //            convert it back to its 3-letter country code when calling promptForLanguage
+
+            country = promptForCountry(translator);
+
             String language = promptForLanguage(translator, country);
             if (quit.equals(language)) {
                 break;
@@ -73,13 +75,29 @@ public class Main {
         //            and print them out; one per line
         //      hint: class Collections provides a static sort method
         // TODO Task: convert the country codes to the actual country names before sorting
-        System.out.println(countries);
+
+        CountryCodeConverter converter = new CountryCodeConverter("country-codes.txt");
+
+        // convert country codes to names
+        List<String> names = new ArrayList<>();
+
+        for (String code : countries) {
+            // System.out.println("code: " + code);
+            String name = converter.fromCountryCode(code);
+            // System.out.println("name: " + name);
+            names.add(name);
+        }
+        // System.out.println("names array: " + names);
+        Collections.sort(names);
+
+        for (String name : names) {
+            System.out.println(name);
+        }
 
         System.out.println("select a country from above:");
 
         Scanner s = new Scanner(System.in);
         return s.nextLine();
-
     }
 
     // Note: CheckStyle is configured so that we don't need javadoc for private methods
