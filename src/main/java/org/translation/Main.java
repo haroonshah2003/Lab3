@@ -45,9 +45,9 @@ public class Main {
             if (quit.equals(country)) {
                 break;
             }
-
-            country = promptForCountry(translator);
-
+            // TODO Task: Once you switch promptForCountry so that it returns the country
+            //            name rather than the 3-letter country code, you will need to
+            //            convert it back to its 3-letter country code when calling promptForLanguage
             String language = promptForLanguage(translator, country);
             if (quit.equals(language)) {
                 break;
@@ -97,19 +97,35 @@ public class Main {
         System.out.println("select a country from above:");
 
         Scanner s = new Scanner(System.in);
-        return s.nextLine();
+        String countryName = s.nextLine();
+
+        return converter.fromCountry(countryName);
     }
 
     // Note: CheckStyle is configured so that we don't need javadoc for private methods
     private static String promptForLanguage(Translator translator, String country) {
+        List<String> languages = translator.getCountryLanguages(country);
+        LanguageCodeConverter converter = new LanguageCodeConverter("language-codes.txt");
+        List<String> languageNames = new ArrayList<>();
 
         // TODO Task: replace the line below so that we sort the languages alphabetically and print them out; one per line
         // TODO Task: convert the language codes to the actual language names before sorting
-        System.out.println(translator.getCountryLanguages(country));
+
+        for (String code : languages) {
+            String name = converter.fromLanguageCode(code);
+            languageNames.add(name);
+        }
+
+        Collections.sort(languageNames);
+        for (String name : languageNames) {
+            System.out.println(name);
+        }
 
         System.out.println("select a language from above:");
 
         Scanner s = new Scanner(System.in);
-        return s.nextLine();
+        String languageName = s.nextLine();
+
+        return converter.fromLanguage(languageName);
     }
 }
