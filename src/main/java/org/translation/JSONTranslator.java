@@ -5,9 +5,12 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * An implementation of the Translator interface which reads in the translation
@@ -16,6 +19,8 @@ import org.json.JSONArray;
 public class JSONTranslator implements Translator {
 
     // TODO Task: pick appropriate instance variables for this class
+
+    private JSONArray jsonArray;
 
     /**
      * Constructs a JSONTranslator using data from the sample.json resources file.
@@ -30,12 +35,12 @@ public class JSONTranslator implements Translator {
      * @throws RuntimeException if the resource file can't be loaded properly
      */
     public JSONTranslator(String filename) {
-        // read the file to get the data to populate things...
+
         try {
 
             String jsonString = Files.readString(Paths.get(getClass().getClassLoader().getResource(filename).toURI()));
 
-            JSONArray jsonArray = new JSONArray(jsonString);
+            jsonArray = new JSONArray(jsonString);
 
             // TODO Task: use the data in the jsonArray to populate your instance variables
             //            Note: this will likely be one of the most substantial pieces of code you write in this lab.
@@ -50,14 +55,43 @@ public class JSONTranslator implements Translator {
     public List<String> getCountryLanguages(String country) {
         // TODO Task: return an appropriate list of language codes,
         //            but make sure there is no aliasing to a mutable object
-        return new ArrayList<>();
+
+        List<String> countryLanguages = new ArrayList<>();
+
+        try {
+            // GET ALPHA 2 OF THE COUNTRY
+            // MATCH THE ALPHA 2 WITH
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject countryObj = jsonArray.getJSONObject(i);
+
+
+
+                countryLanguages.add(languageCode);}
+        } catch (JSONException ex) {
+            throw new RuntimeException("Error retrieving country codes from JSON data.", ex);
+        }
+
+        return List.copyOf(countryLanguages);
     }
 
     @Override
     public List<String> getCountries() {
         // TODO Task: return an appropriate list of country codes,
         //            but make sure there is no aliasing to a mutable object
-        return new ArrayList<>();
+
+        List<String> countryCodes = new ArrayList<>();
+
+        try {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject countryObj = jsonArray.getJSONObject(i);
+                String alpha3Code = countryObj.getString("alpha3");
+                countryCodes.add(alpha3Code);}
+        } catch (JSONException ex) {
+            throw new RuntimeException("Error retrieving country codes from JSON data.", ex);
+        }
+
+        return List.copyOf(countryCodes);
     }
 
     @Override
