@@ -5,11 +5,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -18,9 +17,9 @@ import org.json.JSONObject;
  */
 public class JSONTranslator implements Translator {
 
-    // TODO Task: pick appropriate instance variables for this class
-
-    private JSONArray jsonArray;
+    private final List<String> country;
+    private final HashMap<String, List<String>> countryLanguages;
+    private final HashMap<String, HashMap<String, String>> translations;
 
     /**
      * Constructs a JSONTranslator using data from the sample.json resources file.
@@ -35,68 +34,56 @@ public class JSONTranslator implements Translator {
      * @throws RuntimeException if the resource file can't be loaded properly
      */
     public JSONTranslator(String filename) {
+        country = new ArrayList<>();
+        countryLanguages = new HashMap<>();
+        translations = new HashMap<>();
 
         try {
-
             String jsonString = Files.readString(Paths.get(getClass().getClassLoader().getResource(filename).toURI()));
 
-            jsonArray = new JSONArray(jsonString);
+            JSONArray jsonArray = new JSONArray(jsonString);
 
-            // TODO Task: use the data in the jsonArray to populate your instance variables
-            //            Note: this will likely be one of the most substantial pieces of code you write in this lab.
 
-        }
-        catch (IOException | URISyntaxException ex) {
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject countryObj = jsonArray.getJSONObject(i);
+                String countryCode = countryObj.getString("alpha3");
+                country.add(countryCode);
+
+                List<String> languages = new ArrayList<>();
+                HashMap<String, String> countryTranslations = new HashMap<>();
+
+                for (String key : countryObj.keySet()) {
+                    if (!key.equals("alpha2") && !key.equals("alpha3") && !key.equals("id")) {
+                        languages.add(key);
+                        countryTranslations.put(key, countryObj.getString(key));
+                    }
+                }
+
+                countryLanguages.put(countryCode, languages);
+                translations.put(countryCode, countryTranslations);
+            }
+
+        } catch (IOException | URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
     }
 
     @Override
     public List<String> getCountryLanguages(String country) {
-        // TODO Task: return an appropriate list of language codes,
-        //            but make sure there is no aliasing to a mutable object
-
-        List<String> countryLanguages = new ArrayList<>();
-
-        try {
-            // GET ALPHA 2 OF THE COUNTRY
-            // MATCH THE ALPHA 2 WITH
-
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject countryObj = jsonArray.getJSONObject(i);
-
-
-
-                countryLanguages.add(languageCode);}
-        } catch (JSONException ex) {
-            throw new RuntimeException("Error retrieving country codes from JSON data.", ex);
-        }
-
-        return List.copyOf(countryLanguages);
+        return new ArrayList<>(countryLanguages.getOrDefault(country, new ArrayList<>()));
     }
 
     @Override
     public List<String> getCountries() {
-        // TODO Task: return an appropriate list of country codes,
-        //            but make sure there is no aliasing to a mutable object
-
-        List<String> countryCodes = new ArrayList<>();
-
-        try {
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject countryObj = jsonArray.getJSONObject(i);
-                String alpha3Code = countryObj.getString("alpha3");
-                countryCodes.add(alpha3Code);}
-        } catch (JSONException ex) {
-            throw new RuntimeException("Error retrieving country codes from JSON data.", ex);
-        }
-
-        return List.copyOf(countryCodes);
+        return new ArrayList<>(country);
     }
 
     @Override
     public String translate(String country, String language) {
-        // TODO Task: complete this method using your instance variables as needed
+        HashMap<String, String> countryTranslation = translations.get(country);
+        if (countryTranslation != null) {
+            return countryTranslation.get(language);
+        }
         return null;
     }
 }
