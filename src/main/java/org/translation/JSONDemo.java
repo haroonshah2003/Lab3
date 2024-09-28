@@ -37,7 +37,7 @@ public class JSONDemo {
         for (int i = 1; i < jsonArray.length(); i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i);
             String key = jsonObject.getString("key1");
-            if (key.equals("string1b")) {
+            if ("string1b".equals(key)) {
                 a = key;
             }
         }
