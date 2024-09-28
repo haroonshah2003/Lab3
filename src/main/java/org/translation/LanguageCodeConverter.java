@@ -13,8 +13,8 @@ import java.util.Map;
  */
 public class LanguageCodeConverter {
 
-    private Map<String, String> languages;
-    private Map<String, String> codes;
+    private final Map<String, String> languages;
+    private final Map<String, String> codes;
 
     /**
      * Default constructor which will load the language codes from "language-codes.txt"
@@ -31,27 +31,28 @@ public class LanguageCodeConverter {
      */
     public LanguageCodeConverter(String filename) {
 
+        codes = new HashMap<>();
+        languages = new HashMap<>();
+
         try {
             List<String> lines = Files.readAllLines(Paths.get(getClass()
                     .getClassLoader().getResource(filename).toURI()));
 
-            codes = new HashMap<>();
-            languages = new HashMap<>();
-            while (lines.iterator().hasNext()) {
-                String line = lines.iterator().next();
+            for (String line : lines) {
                 String[] parts = line.split("\\s+");
 
-                // language |--> code
-                codes.put(parts[0], parts[1]);
-
-                // code |--> language
-                languages.put(parts[1], parts[0]);
+                if (parts.length >= 2) {
+                    codes.put(parts[0], parts[1]);
+                    languages.put(parts[1], parts[0]);
+                }
+                else {
+                    System.out.println("Warning: Skipping invalid line format: " + line);
+                }
             }
         }
         catch (IOException | URISyntaxException ex) {
-            throw new RuntimeException(ex);
+            throw new RuntimeException("Failed to load language codes from file", ex);
         }
-
     }
 
     /**

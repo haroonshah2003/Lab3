@@ -4,19 +4,18 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 
 /**
  * This class provides the service of converting country codes to their names.
  */
 public class CountryCodeConverter {
 
-    private Map<String, String> countries;
-    private Map<String, String> codes;
+    private static final int MIN_PARTS_LENGTH = 4;
+    private final Map<String, String> countryToCode;
+    private final Map<String, String> codeToCountry;
 
     /**
      * Default constructor which will load the country codes from "country-codes.txt"
@@ -32,25 +31,36 @@ public class CountryCodeConverter {
      * @throws RuntimeException if the resource file can't be loaded properly
      */
     public CountryCodeConverter(String filename) {
+        countryToCode = new HashMap<>();
+        codeToCountry = new HashMap<>();
 
         try {
-            List<String> lines = Files.readAllLines(Paths.get(getClass()
-                    .getClassLoader().getResource(filename).toURI()));
+            List<String> lines = Files.readAllLines(Paths.get(getClass().getClassLoader()
+                    .getResource(filename).toURI()));
 
-            countries = new HashMap<>();
-            codes = new HashMap<>();
+            for (String currentLine : lines.subList(1, lines.size())) {
+                String trimmedLine = currentLine.trim();
 
-            for (String line : lines.subList(1, lines.size())) {
-                String[] parts = line.split("\\s+");
+                if (trimmedLine.isEmpty()) {
+                    continue;
+                }
 
-                countries.put(parts[0], parts[2]);
-                codes.put(parts[2], parts[0]);
+                String[] parts = trimmedLine.split("\\t+");
+
+                if (parts.length < MIN_PARTS_LENGTH) {
+                    System.out.println("Warning: Invalid line format - " + trimmedLine);
+                    continue;
+                }
+
+                String countryName = parts[0].trim();
+                String alpha3Code = parts[2].trim();
+                countryToCode.put(countryName, alpha3Code);
+                codeToCountry.put(alpha3Code.toLowerCase(), countryName);
             }
         }
         catch (IOException | URISyntaxException ex) {
             throw new RuntimeException(ex);
         }
-
     }
 
     /**
@@ -59,9 +69,7 @@ public class CountryCodeConverter {
      * @return the name of the country corresponding to the code
      */
     public String fromCountryCode(String code) {
-        System.out.println("codes " + codes);
-        System.out.println("codes.get(code) " + codes.get(code));
-        return codes.get(code);
+        return codeToCountry.get(code.toLowerCase());
     }
 
     /**
@@ -70,7 +78,7 @@ public class CountryCodeConverter {
      * @return the 3-letter code of the country
      */
     public String fromCountry(String country) {
-        return countries.get(country);
+        return countryToCode.get(country);
     }
 
     /**
@@ -78,6 +86,6 @@ public class CountryCodeConverter {
      * @return how many countries are included in this code converter.
      */
     public int getNumCountries() {
-        return countries.size();
+        return countryToCode.size();
     }
 }
