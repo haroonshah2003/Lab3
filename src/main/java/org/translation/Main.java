@@ -23,8 +23,8 @@ public class Main {
      */
     public static void main(String[] args) {
 
-        // Translator translator = new JSONTranslator(null);
-        Translator translator = new InLabByHandTranslator();
+         Translator translator = new JSONTranslator();
+       //  Translator translator = new InLabByHandTranslator();
 
         runProgram(translator);
     }

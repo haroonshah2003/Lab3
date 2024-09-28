@@ -62,6 +62,7 @@ public class CountryCodeConverter {
         System.out.println("codes " + codes);
         System.out.println("codes.get(code) " + codes.get(code));
         return codes.get(code);
+        // convert to lowercase
     }
 
     /**
