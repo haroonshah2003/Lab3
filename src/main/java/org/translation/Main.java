@@ -16,6 +16,8 @@ import java.util.Scanner;
  */
 public class Main {
 
+    private static final String quit = "quit";
+
     /**
      * This is the main entry point of our Translation System!<br/>
      * A class implementing the Translator interface is created and passed into a call to runProgram.
@@ -49,13 +51,16 @@ public class Main {
 
             // Translate the country and language and print the result
             String translation = translator.translate(country, language);
-            {
-                CountryCodeConverter ccc = new CountryCodeConverter("country-codes.txt");
-                LanguageCodeConverter lcc = new LanguageCodeConverter("language-codes.txt");
-                System.out.println(ccc.fromCountryCode(country)
-                        + " in " + lcc.fromLanguageCode(language)
-                        + " is " + translation);
-            }
+
+            // ----------------
+            // -- Simplify ? --
+            // ----------------
+            CountryCodeConverter ccc = new CountryCodeConverter("country-codes.txt");
+            LanguageCodeConverter lcc = new LanguageCodeConverter("language-codes.txt");
+            System.out.println(ccc.fromCountryCode(country)
+                    + " in " + lcc.fromLanguageCode(language)
+                    + " is " + translation);
+            // ----------------
 
             System.out.println("Press enter to continue or quit to exit.");
 
@@ -98,8 +103,8 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         String selectedCountryName = scanner.nextLine();
 
-        if (selectedCountryName.equalsIgnoreCase("quit")) {
-            return "quit";
+        if ("quit".equalsIgnoreCase(selectedCountryName)) {
+            return selectedCountryName;
         }
 
         return converter.fromCountry(selectedCountryName);
@@ -135,8 +140,8 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         String selectedLanguageName = scanner.nextLine();
 
-        if (selectedLanguageName.equalsIgnoreCase("quit")) {
-            return "quit";
+        if ("quit".equalsIgnoreCase(selectedLanguageName)) {
+            return selectedLanguageName;
         }
 
         return converter.fromLanguage(selectedLanguageName);
