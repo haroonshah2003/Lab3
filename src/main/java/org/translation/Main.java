@@ -49,7 +49,14 @@ public class Main {
 
             // Translate the country and language and print the result
             String translation = translator.translate(country, language);
-            System.out.println(country + " in " + language + " is " + translation);
+            {
+                CountryCodeConverter ccc = new CountryCodeConverter("country-codes.txt");
+                LanguageCodeConverter lcc = new LanguageCodeConverter("language-codes.txt");
+                System.out.println(ccc.fromCountryCode(country)
+                        + " in " + lcc.fromLanguageCode(language)
+                        + " is " + translation);
+            }
+
             System.out.println("Press enter to continue or quit to exit.");
 
             // Create Scanner inside this method for new input
@@ -85,11 +92,16 @@ public class Main {
             System.out.println(name);
         }
 
-        System.out.println("Select a country from above:");
+        System.out.println("select a country from above:");
 
         // Create a new Scanner object inside the method
         Scanner scanner = new Scanner(System.in);
         String selectedCountryName = scanner.nextLine();
+
+        if (selectedCountryName.equalsIgnoreCase("quit")) {
+            return "quit";
+        }
+
         return converter.fromCountry(selectedCountryName);
     }
 
@@ -117,11 +129,16 @@ public class Main {
             System.out.println(name);
         }
 
-        System.out.println("Select a language from above:");
+        System.out.println("select a language from above:");
 
         // Create a new Scanner object inside the method
         Scanner scanner = new Scanner(System.in);
         String selectedLanguageName = scanner.nextLine();
+
+        if (selectedLanguageName.equalsIgnoreCase("quit")) {
+            return "quit";
+        }
+
         return converter.fromLanguage(selectedLanguageName);
     }
 }

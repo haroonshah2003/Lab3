@@ -80,9 +80,9 @@ public class JSONTranslator implements Translator {
 
     @Override
     public String translate(String country, String language) {
-        Map<String, String> countryTranslation = translations.get(country);
+        Map<String, String> countryTranslation = translations.get(country.toLowerCase());
         if (countryTranslation != null) {
-            return countryTranslation.get(language);
+            return countryTranslation.get(language.toLowerCase());
         }
         return null;
     }
