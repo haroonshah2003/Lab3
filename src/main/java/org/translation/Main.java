@@ -16,7 +16,7 @@ import java.util.Scanner;
  */
 public class Main {
 
-    private static final String quit = "quit";
+    private static final String QUIT = "quit";
 
     /**
      * This is the main entry point of our Translation System!<br/>
@@ -37,38 +37,31 @@ public class Main {
      */
     public static void runProgram(Translator translator) {
         while (true) {
-            String quit = "quit";
 
-            // Create Scanner object inside the method
             String country = promptForCountry(translator);
-            if (quit.equalsIgnoreCase(country)) {
+            if (QUIT.equalsIgnoreCase(country)) {
                 break;
             }
             String language = promptForLanguage(translator, country);
-            if (quit.equalsIgnoreCase(language)) {
+            if (QUIT.equalsIgnoreCase(language)) {
                 break;
             }
 
             // Translate the country and language and print the result
             String translation = translator.translate(country, language);
 
-            // ----------------
-            // -- Simplify ? --
-            // ----------------
             CountryCodeConverter ccc = new CountryCodeConverter("country-codes.txt");
             LanguageCodeConverter lcc = new LanguageCodeConverter("language-codes.txt");
             System.out.println(ccc.fromCountryCode(country)
                     + " in " + lcc.fromLanguageCode(language)
                     + " is " + translation);
-            // ----------------
 
             System.out.println("Press enter to continue or quit to exit.");
 
-            // Create Scanner inside this method for new input
             Scanner s = new Scanner(System.in);
             String textTyped = s.nextLine();
 
-            if (quit.equalsIgnoreCase(textTyped)) {
+            if (QUIT.equalsIgnoreCase(textTyped)) {
                 break;
             }
         }
@@ -99,11 +92,10 @@ public class Main {
 
         System.out.println("select a country from above:");
 
-        // Create a new Scanner object inside the method
         Scanner scanner = new Scanner(System.in);
         String selectedCountryName = scanner.nextLine();
 
-        if ("quit".equalsIgnoreCase(selectedCountryName)) {
+        if (QUIT.equalsIgnoreCase(selectedCountryName)) {
             return selectedCountryName;
         }
 
@@ -136,11 +128,10 @@ public class Main {
 
         System.out.println("select a language from above:");
 
-        // Create a new Scanner object inside the method
         Scanner scanner = new Scanner(System.in);
         String selectedLanguageName = scanner.nextLine();
 
-        if ("quit".equalsIgnoreCase(selectedLanguageName)) {
+        if (QUIT.equalsIgnoreCase(selectedLanguageName)) {
             return selectedLanguageName;
         }
 
