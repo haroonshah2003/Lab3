@@ -46,8 +46,6 @@ public class Main {
             if (QUIT.equalsIgnoreCase(language)) {
                 break;
             }
-
-            // Translate the country and language and print the result
             String translation = translator.translate(country, language);
 
             CountryCodeConverter ccc = new CountryCodeConverter("country-codes.txt");
